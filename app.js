@@ -12,6 +12,9 @@ var logger = require('morgan');
  */
 var app = express(); //Definimos la aplicación de Express
 
+// conectar a la base de datos
+require('./lib/connectMongoose');
+
 /**
  * Configuramos la aplicación
  */
@@ -46,9 +49,15 @@ app.use(express.static(path.join(__dirname, 'public'))); //Servir ficheros está
 //   // next(new Error('Esto va mal, amigo'));
 // });
 
+/**
+ * Rutas del API
+ * Es recomendable que corresponda la ruta del browser con la ruta del filesystem
+ * (Por si hubiera algún problema en la aplicación)
+ */
+app.use('/api/anuncios', require('./routes/api/anuncios'));
 
 /**
- * Establecemos las Rutas del Website (de la aplicación)
+ * Rutas del Website (de la aplicación)
  */
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);
@@ -65,6 +74,10 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
+/**
+ * Si fuera una página web por la que estamos dando error: Renderizamos la página web de error
+ * Si fuera una petición al API por la que estamos dando error: Responderíamos con un JSON
+ */
 // error handler
 app.use(function(err, req, res, next) {
   if(err.array) { // error de validación (Añadido para las validaciones de express-validator)
@@ -81,13 +94,28 @@ app.use(function(err, req, res, next) {
     const errInfo = err.array({ onlyFirstError: true })[0]; // err.array devuelve un array. Al poner [0] sólo cogemos el primer error que haya en ese array de errores.
     
     //err.message = `El parámetro ${errInfo.param} ${errInfo.msg}`;
+    
+    /**
+     * Utilizamos un ternario para que devuelva:
+     * - Si es una petición de API tendremos un objeto:
+     *    {
+     *      "error": "Not Found"
+     *    }
+     * - Si es una página web tendremos un string:
+     *    `El parámetro ${errInfo.param} ${errInfo.msg}`
+     * 
+     * err.mapped(): Nos devuelve una lista con todos los errores que había de validación
+     */
     err.message = isAPIRequest(req) ? 
     { message: 'Not valid', errors: err.mapped() }
     : `El parámetro ${errInfo.param} ${errInfo.msg}`;
   }
 
+  // Subimos esta línea por encima de si el error fuera a un API (JSON) para que nos devuelva el tipo de error (404, 500, ...) en herrmientas tipo Postman.
   res.status(err.status || 500);
 
+  // Llamamos a la funición para saber si es o no una API
+  // Si es una API devolvemos el error con un formato JSON
   if (isAPIRequest(req)) {
     res.json({ error: err.message });
     return;
@@ -97,13 +125,17 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+  // Renderizamos la página web de error (Render the error page)
   // res.status(err.status || 500);
   res.render('error'); //renderizamos una página de error, mostrando el error: Llama a la vista ./views/error.ejs o html
 });
 
+/**
+ * Función que nos dirá si es o no una API (Devolviendo true/false)
+ */
 function isAPIRequest(req) {
-  return req.originalUrl.startsWith('/api/'); //Devuelve todo menos el dominio (http://localhost:3000/api/zzz devuelve /api/zzz)
+  // req.originalUrl: Devuelve todo menos el dominio (http://localhost:3000/api/zzz devuelve /api/zzz)
+  return req.originalUrl.startsWith('/api/'); // Si lo que devuelve comienza por /api/
 }
 
 module.exports = app;

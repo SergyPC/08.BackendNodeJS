@@ -43,7 +43,71 @@ npm run dev
 
 * http://localhost:3000/apiv1/anuncios
 
-Returns the list of articles in JSON format.
+Returns the list of articles in JSON format:
+```shell
+[
+  {
+    "tags": [
+      "lifestyle",
+      "motor"
+    ],
+    "_id": "5e7f5873ef51c93f502f4fa8",
+    "nombre": "Bicicleta eléctrica Rodars 1000W",
+    "venta": true,
+    "precio": 230.15,
+    "foto": "bicicleta.jpg",
+    "__v": 0
+  },
+  {
+    "tags": [
+      "lifestyle",
+      "mobile"
+    ],
+    "_id": "5e7f5873ef51c93f502f4fa9",
+    "nombre": "iPhone 11Pro",
+    "venta": true,
+    "precio": 50,
+    "foto": "iphone-11-pro.jpg",
+    "__v": 0
+  },
+  {
+    "tags": [
+      "lifestyle",
+      "motor"
+    ],
+    "_id": "5e7f5873ef51c93f502f4faa",
+    "nombre": "Aston Martin DBS",
+    "venta": true,
+    "precio": 225630.55,
+    "foto": "aston-martin-dbs.jpg",
+    "__v": 0
+  },
+  {
+    "tags": [
+      "lifestyle",
+      "work"
+    ],
+    "_id": "5e7f5873ef51c93f502f4fab",
+    "nombre": "MacBook Air",
+    "venta": false,
+    "precio": 250.5,
+    "foto": "apple-macbook-air.jpg",
+    "__v": 0
+  },
+  {
+    "tags": [
+      "lifestyle",
+      "work"
+    ],
+    "_id": "5e7f5873ef51c93f502f4fac",
+    "nombre": "TV Samsung 4K UHD",
+    "venta": false,
+    "precio": 4250,
+    "foto": "TV-Samsung-49NU7305.jpg",
+    "__v": 0
+  }
+]
+```
 
 <br />
 
