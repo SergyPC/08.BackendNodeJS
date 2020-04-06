@@ -20,28 +20,51 @@ npm run install-db
 
 To start the project use:
 
-- In production:
-```shell
-npm start
-```
 - In development:
 ```shell
 npm run dev
+```
+- In production:
+```shell
+npm start
 ```
 
 <br />
 
 ## Page Routes
 
-* http://localhost:3000/
-* http://localhost:3000/anuncios
-* http://localhost:3000/tags
+<!-- * http://localhost:3000/ -->
+* http://localhost:3000/api/v1/tags
+* http://localhost:3000/api/v1/anuncios
 
 <br />
 
 ## API Routes
 
-* http://localhost:3000/apiv1/anuncios
+* http://localhost:3000/api/v1/anuncios
+
+Returns the list of tags in JSON format:
+```shell
+[
+  {
+    "_id": "5e8a01840051d817dcc778f7",
+    "nombre": "lifestyle"
+  },
+  {
+    "_id": "5e8a01840051d817dcc778f8",
+    "nombre": "mobile"
+  },
+  {
+    "_id": "5e8a01840051d817dcc778f9",
+    "nombre": "motor"
+  },
+  {
+    "_id": "5e8a01840051d817dcc778fa",
+    "nombre": "work"
+  }
+]
+
+* http://localhost:3000/api/v1/anuncios
 
 Returns the list of articles in JSON format:
 ```shell
@@ -56,7 +79,6 @@ Returns the list of articles in JSON format:
     "venta": true,
     "precio": 230.15,
     "foto": "bicicleta.jpg",
-    "__v": 0
   },
   {
     "tags": [
@@ -68,7 +90,6 @@ Returns the list of articles in JSON format:
     "venta": true,
     "precio": 50,
     "foto": "iphone-11-pro.jpg",
-    "__v": 0
   },
   {
     "tags": [
@@ -80,7 +101,6 @@ Returns the list of articles in JSON format:
     "venta": true,
     "precio": 225630.55,
     "foto": "aston-martin-dbs.jpg",
-    "__v": 0
   },
   {
     "tags": [
@@ -92,7 +112,6 @@ Returns the list of articles in JSON format:
     "venta": false,
     "precio": 250.5,
     "foto": "apple-macbook-air.jpg",
-    "__v": 0
   },
   {
     "tags": [
@@ -104,7 +123,6 @@ Returns the list of articles in JSON format:
     "venta": false,
     "precio": 4250,
     "foto": "TV-Samsung-49NU7305.jpg",
-    "__v": 0
   }
 ]
 ```
@@ -140,27 +158,17 @@ GET /apiv1/anuncios
 ```shell
 // Endpoint: /apiv1/anuncios
 // It's a GET method that optionally through query string allows the following data:
-
-[
-    {
-        [nombre]: string,
-        [venta]: boolean,
-        [precio]: number,
-        [foto]: string,
-        [tags]: array,
-
-        [limit]: number,
-        [skip]: number,
-        [fields],
-        [sort]
-    },
-    {
-        ...
-    }
-]
+  [nombre]: string
+  [venta]: boolean
+  [precio]: number
+  [tags]: array
+  [limit]: number
+  [skip]: number
+  [fields]: (nombre, venta, precio, foto, tags)
+  [sort]: (nombre, venta, precio, foto, tags)
 ```
 
-** Default limit is 10.000 **
+** Default limit is 100 **
 
 Will return the following:
 

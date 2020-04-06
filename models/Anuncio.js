@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Modelo Anuncio
+ * Modelo de Anuncio
  */
 
 // Cargamos Mongoose
@@ -10,23 +10,34 @@ const mongoose = require('mongoose');
 // 1) Crear un esquema
 // https://mongoosejs.com/docs/schematypes.html
 const anuncioSchema = mongoose.Schema({
-	nombre: String,
-	venta: Boolean,
-	precio: Number,
-	foto: String,
+	name: String,
+	sell: Boolean, //true (sell) or false (buy)
+	price: Number,
+	photo: String,
     tags: [String],
+    detail: String,
+    createdAt: Date,
+    updatedAt: Date,
     //message: mongoose.Schema.Types.Mixed, //Recogerá cualquier tipología en esta propiedad
 });
 
-// Nos creamos un método estático (Sería como un prototype sobre anuncioSchema)
-anuncioSchema.statics.lista = function (filtro, limit, skip, sort, fields) {
-    //return Anuncio.find(filtro); //Cuando no existía el limit
-    const query = Anuncio.find(filtro);
-    query.limit(limit);
-    query.skip(skip);
+/**
+ * Nos creamos un Método Estático. Sería como un prototype sobre anuncioSchema (Sobre la clase o modelo).
+ * Ahora este modelo de anuncio tiene un método lista para usarlo en la API anuncios:
+ *  const docs = await Anuncio.lista(filtro, limit, skip, sort, fields);
+ * El método lista se lo estamos metiendo a la Clase Anuncio
+ * Anuncio.lista(...) no es una instancia de anuncio. Esto respresanta a la Clase Anuncio (al Modelo).
+ */
+anuncioSchema.statics.lista = function (filter, limit, skip, sort, fields) {
+    //return Anuncio.find(filter); //Cuando no existía el limit
+    const query = Anuncio.find(filter);
+    query.limit(limit); //Lo recibe como numérico
+    query.skip(skip); //Lo recibe como numérico
     query.sort(sort);
     query.select(fields);
-    return query.exec();
+    // console.log("query:", query);
+    // El find, limit, skip, sort, select... no se van a ejecutar hasta que ponga un .then o un .exec
+    return query.exec(); // exec: Devolverá una promesa. Que al final, cuando sea resuelta, resolverá a una lista de documentos (Promise<Document[]>)
 };
 
 // 2) Con el esquema, creamos un modelo (<nombreDelModelo>, <esquemaQueNosHemosCreado>)

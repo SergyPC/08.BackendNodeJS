@@ -30,7 +30,7 @@ app.engine('html', require('ejs').__express); //Definimos un nuevo motor de vist
 // middlewares:
 app.use(logger('dev')); //Log
 app.use(express.json());
-app.use(express.urlencoded({ extended: false })); //urlencoded para temas de POST y PUT
+app.use(express.urlencoded({ extended: false })); // Utilizamos en Postman (POST, PUT) urlencoded porque nuestra aplicación tenemos configurado un middleware que mira el body de una petición y parsea ese formato urlencoded y lo mete en req.body para poder utilizarlo comodamente.
 app.use(cookieParser()); //Parsea las cookies
 app.use(express.static(path.join(__dirname, 'public'))); //Servir ficheros estáticos
 
@@ -54,7 +54,11 @@ app.use(express.static(path.join(__dirname, 'public'))); //Servir ficheros está
  * Es recomendable que corresponda la ruta del browser con la ruta del filesystem
  * (Por si hubiera algún problema en la aplicación)
  */
-app.use('/api/anuncios', require('./routes/api/anuncios'));
+// app.use('/api/anuncios', require('./routes/api/anuncios'));
+// app.use('/api/tags', require('./routes/api/tags'));
+app.use('/api/v1/anuncios', require('./routes/api/v1/anuncios'));
+app.use('/api/v1/tags', require('./routes/api/v1/tags'));
+
 
 /**
  * Rutas del Website (de la aplicación)
