@@ -66,6 +66,7 @@ app.use('/api/v1/tags', require('./routes/api/v1/tags'));
 // app.use('/', indexRouter);
 // app.use('/users', usersRouter);
 app.use('/', require('./routes/index'));
+app.use('/tags', require('./routes/tags'));
 app.use('/users', require('./routes/users'));
 
 

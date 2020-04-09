@@ -15,35 +15,18 @@ const Tag = require('../../../models/Tag');
 //Validaciones En el middleware: Destructuring:
 const { query, check, validationResult } = require('express-validator');
 
-// Creamos un middleware para que nos devuelva en http://localhost:3000/api/tags un Json con los docs encontrados
-// usando un arrow function
-// router.get('/', (req, res, next) => {
-//     Tag.find().exec((err, docs) => {
-//       res.json(docs);
-//     });
-// });
-
 /**
  * GET /api/tags
  * Devuelve una lista de tags
- * http://localhost:3000/api/tags
+ * http://localhost:3000/api/v1/tags
  */
-// router.get('/', async (req, res, next) => {
-//     try {
-//         const docs = await Tag.find(); //Le decimos al modelo Agentes que busque una lista de tags
-//         res.json(docs);
-//     } catch (err) {
-//         next (err);
-//     }
-// });
-
-/**
- * GET /api/tags
- * Devuelve una lista de tags
- * http://localhost:3000/api/tags
- */
-// Creamos un middleware para que nos devuelva en http://localhost:3000/api/tags un Json con los docs encontrados
-// usando una promesa async / away
+// Creamos un middleware para que nos devuelva en http://localhost:3000/api/v1/tags un JSON con los diferentes docs encontrados
+    // [
+    //     "lifestyle",
+    //     "mobile",
+    //     "motor",
+    //     "work"
+    // ]
 router.get('/', async (req, res, next) => {
     try {
         //const docs = await Tag.find(); 
@@ -53,6 +36,8 @@ router.get('/', async (req, res, next) => {
         const skip = parseInt(req.query.skip);
         const sort = req.query.sort;
         let fields = req.query.fields;
+
+        const distinct = req.query.distinct || "name";
 
         let filter = {};
         
@@ -64,7 +49,8 @@ router.get('/', async (req, res, next) => {
             filter.name = { $regex: '^' + name, $options: 'i' }; //Filtrará por algo que comience por el nombre introducido, sin diferenciar entre mayúsculas y minúsculas
         }
 
-        const docs = await Tag.lista(filter, limit, skip, sort, fields); //http://localhost:3000/api/tags?name=work
+        const docs = await Tag.lista(filter, limit, skip, sort, fields, distinct); //http://localhost:3000/api/v1/tags?name=work
+        
         res.json(docs);
             
     } catch (err) {

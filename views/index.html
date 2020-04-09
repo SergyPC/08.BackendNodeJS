@@ -1,11 +1,127 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- title -->
     <title><%= title %></title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <!-- icon -->
+    <link rel="icon" href="/images/ico.jpg" type="image/jpg">
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <!-- navbar -->
+    <!-- Image and text -->
+    <nav class="navbar navbar-dark " style="background-color: rgb(20, 193, 173);">
+      <a class="navbar-brand" href="#">
+        <img src="/images/ico.jpg" width="60" height="60" class="d-inline-block align-top" alt="<%= title %>">
+        <span class="navbar-title-h1"><%= title %></span>
+      </a>
+    </nav>
+    <!-- navbar-end -->
+
+    <main>
+    
+
+    
+    <% if (data.length > 0) { %>
+
+    <!-- <h5>Welcome to <%= title %>! Enter some allowed filter in the queryparams...</h5> -->
+
+    <div class="row row-cols-1 row-cols-md-3">
+      <% data.forEach(ad => { %>
+      <div class="col mb-4">
+        <div class="card h-100">
+          <img src="/images/<%= ad.photo %>" class="card-img-top" alt="<%= ad.name %>">
+          <div class="card-body">
+            <h5 class="card-title"><%= ad.name %></h5>
+            <p class="card-text">Price: <%= ad.price %> &euro;</p>
+            <p class="card-text">Type: <%= ((ad.sell) ? 'Sell' : 'Buy') %></p>
+            <p class="card-text">Tags: <%= ad.tags %></p>
+            <p class="card-text"><%= ad.detail %></p>
+          </div>
+          <div class="card-footer text-center">
+              <% 
+              const dateUpdatedAt = new Date(ad.updatedAt);
+              const dateCreatedAt = new Date(ad.createdAt);
+              %>
+              <small class="text-muted">Last updated: <%= dateUpdatedAt.toDateString() %> - <%= dateUpdatedAt.getUTCHours() %>:<%= dateUpdatedAt.getUTCMinutes() %>:<%= dateUpdatedAt.getUTCSeconds() %></small>
+              <br />
+              <small class="text-muted">( Created at: <%= dateCreatedAt.toDateString() %> - <%= dateCreatedAt.getUTCHours() %>:<%= dateCreatedAt.getUTCMinutes() %>:<%= dateCreatedAt.getUTCSeconds() %> )</small>
+          </div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+
+    <% } else { %>
+
+    <div class="alert alert-danger" role="alert">
+      <h4 class="alert-heading">There aren't results with the specified search parameters.</h4>
+      <hr>
+      <p>Verify that:</p>
+      <p>- The sell value can be <i>true</i> or <i>false</i>.</p>
+      <p>- The tags value can be <i>lifestyle</i> or <i>mobile</i> or <i>motor</i> or <i>work</i>.</p>
+      <p>- The price value can be <i>'ExactPrice'</i> or <i>'minPrice-maxPrice'</i> or <i>'minPrice-'</i> or <i>'-maxPrice'</i>.</p>
+      <p>- The decimal price separator must be <i>'.'</i></p>
+    </div>
+
+    <% } %>
+
+
+    <!-- <% if (data.length > 0) { %>
+      <table border='1'>
+        <tr>
+          <th>Name</th>
+          <th>AdType(Sell/Buy)</th>
+          <th>Price</th>
+          <th>Photo</th>
+          <th>Tags</th>
+          <th>Detail</th>
+          <th>createdAt</th>
+          <th>updatedAt</th>
+        </tr>
+        <% for(let i=0; i < data.length; i++) { %>
+        <tr>
+          <td><%= data[i].name %></td>
+          <td><%= ((data[i].sell) ? 'Sell' : 'Buy') %></td>
+          <td><%= data[i].price %></td>
+          <td>
+            (<%= data[i].photo %>)
+            <br />
+            <img src='/images/<%= data[i].photo %>' alt='<%= data[i].name %>' width="200px">
+          </td>
+          <td><%= data[i].tags %></td>
+          <td><%= data[i].detail %></td>
+          <td><%= data[i].createdAt.toString() %></td>
+          <td><%= data[i].updatedAt.toString() %></td>
+        </tr>
+        <% } %>
+      </table>
+    <% } 
+    else { %>
+      <table border='1'>
+        <tr>
+          <th>There aren't results with the specified search parameters.</th>
+        </tr>
+        <tr>
+          <td>
+            <p>&nbsp;Verify that:</p>
+            <ul>
+              <li>The sell value is <i>true</i> or <i>false</i>.</li>
+              <li>The tags value is <i>lifestyle</i> or <i>mobile</i> or <i>motor</i> or <i>work</i>.</li>
+              <li>The price value is <i>'ExactPrice'</i> or <i>'minPrice-maxPrice'</i> or <i>'minPrice-'</i> or <i>'-maxPrice'</i>. &nbsp;</li>
+              <li>The decimal price separator is <i>'.'</i></li>
+            </ul>
+          </td>
+        </tr>
+      </table>
+    <% } %> -->
+
+
+    </main>
   </body>
 </html>

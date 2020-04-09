@@ -73,7 +73,6 @@ router.get('/', async (req, res, next) => { //http://localhost:3000/api/anuncios
 
         //const filter = {};
         let filter = {};
-        const regExpNumbers = new RegExp(/^[0-9]+(.[0-9]+)?$/);
         let isIncorrectPrice = false;
         
         // if(regExpNumbers.test("a123000.000000"))
@@ -90,24 +89,22 @@ router.get('/', async (req, res, next) => { //http://localhost:3000/api/anuncios
         // Eliminamos el campo __v que añade MongoDB por defecto
         (typeof fields === 'undefined') ? fields = '-__v' : fields += ' -__v';
 
-        if (typeof name !== 'undefined') { //if (name) {
+        if (typeof name !== 'undefined') { 
             //filter.name = name;
             filter.name = { $regex: '^' + name, $options: 'i' }; //Filtrará por algo que comience por el nombre introducido, sin diferenciar entre mayúsculas y minúsculas
-            //filter.name = { $regex: name, $options: 'i' }; //Filtrará por el nombre introducido, sin diferenciar entre mayúsculas y minúsculas
-            //filter.name = { $regex: name, $options: 'i' }; //Filtrará por el nombre introducido, sin diferenciar entre mayúsculas y minúsculas
-            // filter.name = new RegExp(name, "i");
-            // filter.name = new RegExp('^' + name, 'i');
+            // filter.name = { $regex: name, $options: 'i' }; //Filtrará por el nombre introducido, sin diferenciar entre mayúsculas y minúsculas
+            // filter.name = new RegExp(`^${name}`, 'i');
             //console.log("filter.name:", filter.name);
         }
 
-        if (typeof sell !== 'undefined') { //if (sell) {
-            filter.sell = sell;
+        if (typeof sell !== 'undefined') { 
             if (sell !== 'true' && sell !== 'false' && sell !== '1' && sell !== '0') { //Si han añadido un valor que no es boolean
                 const err = new Error('The sell should be boolean (true or false).'); //La venta debería ser boolean.
                 err.status = 422;
                 next(err);
                 return;
             }
+            filter.sell = sell;
         }
 
         /**
@@ -117,14 +114,15 @@ router.get('/', async (req, res, next) => { //http://localhost:3000/api/anuncios
          * ● -50 buscará los que tengan precio menor de 50 { price: { '$lte': '50' } }
          * ● 50 buscará los que tengan precio igual a 50 { price: '50' }
          */
-        if (typeof price !== 'undefined') { //if (price) {
+        if (typeof price !== 'undefined') { 
+            const regExpNumbers = new RegExp(/^[0-9]+(.[0-9]+)?$/);
             const rango = price.split('-');
             // console.log ("COMENZAMOS CON PRECIO");
             // console.log ("rango.length:", rango.length);
             // console.log ("rango:", rango);
             // Probar sólo con rango sino da error: // console.log ("rango[0] no hay ',':", rango[0].indexOf(',') === -1);
             // Probar sólo con rango sino da error: // console.log ("rango[1] no hay ',':", rango[1].indexOf(',') === -1);
-            console.log ("price.startsWith('-', 0):", price.startsWith('-', 0));
+            // console.log ("price.startsWith('-', 0):", price.startsWith('-', 0));
             if (rango.length === 1) { //price=50
                 (regExpNumbers.test(price) && price.indexOf(',') === -1) ? filter.price = parseFloat(price) : isIncorrectPrice = true;
 
@@ -134,25 +132,29 @@ router.get('/', async (req, res, next) => { //http://localhost:3000/api/anuncios
                 //     isIncorrectPrice = true;
             }
             else if (rango.length === 2) { //Si contiene algún guión
-                if(price.startsWith('-', 0)) //price=-50
+                if(price.startsWith('-', 0)) { //price=-50
                     (regExpNumbers.test(rango[1]) && rango[1].indexOf(',') === -1) ? filter.price = { $lte: parseFloat(rango[1]) } : isIncorrectPrice = true;
                     // if (regExpNumbers.test(rango[1])) 
                     //     filter.price = { $lte: parseFloat(rango[1]) };
                     // else 
                     //     isIncorrectPrice = true;
-                else
-                    if (!rango[1]) //price=10-
+                } 
+                else {
+                    if (!rango[1]) { //price=10-
                         (regExpNumbers.test(rango[0]) && rango[0].indexOf(',') === -1) ? filter.price = { $gte: parseFloat(rango[0]) } : isIncorrectPrice = true;
                         // if (regExpNumbers.test(rango[0])) 
                         //     filter.price = { $gte: parseFloat(rango[0]) };
                         // else
                         //     isIncorrectPrice = true;
-                    else //price=10-50
+                    }
+                    else { //price=10-50
                         ((regExpNumbers.test(rango[0]) && rango[0].indexOf(',') === -1) && (regExpNumbers.test(rango[1]) && rango[1].indexOf(',') === -1)) ? filter.price = { $gte: parseFloat(rango[0]), $lte: parseFloat(rango[1]) } : isIncorrectPrice = true;
                         // if (regExpNumbers.test(rango[0]) && regExpNumbers.test(rango[1])) 
                         //     filter.price = { $gte: parseFloat(rango[0]), $lte: parseFloat(rango[1]) };
                         // else
                         //     isIncorrectPrice = true;
+                    }
+                }
             } 
             else { //Si contiene 3 o más valores
                 isIncorrectPrice = true;
@@ -354,7 +356,7 @@ router.post('/',
         
         // Y es lo que le vamos a devolver (anuncioGuardado) a quién nos haya hecho la petición al API
         //res.json( { result: anuncioGuardado } ); // Esta respuesta devuelve un codigo de estado 200
-        res.status(201).json( { result: anuncioGuardado } ); // Esta respuesta devuelve un codigo de estado 201
+        res.status(201).json( { result: anuncioGuardado } ); // Esta respuesta devuelve un codigo de estado 201: Success - Created
     } catch (err) {
         next(err);
     }
@@ -453,7 +455,9 @@ router.put('/:id', async(req, res, next) => {
             useFindAndModify: false, //Esta opción hay que añadirla para futuras versiones de Mongoose
         }); //Actualiza el anuncio y Nos devuelve el anuncio actualizado
         
-        res.json({ result: anuncioActualizado });
+        res.status(200).json({ result: anuncioActualizado }); //Response code 200: Success - OK
+
+        //res.json({ result: anuncioActualizado });
     } catch (err) {
         next(err);
     }

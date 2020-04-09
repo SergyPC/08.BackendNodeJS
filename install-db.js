@@ -36,7 +36,7 @@ async function initAnuncios() {
     await Anuncio.deleteMany(); //Borra todos los registros de la tabla anuncios
     await Anuncio.insertMany([  //Añadimos los registros que queramos inicializar por defecto
         { name: 'Bicicleta eléctrica Rodars 1000W', sell: true, price: 230.15, photo: 'bicicleta-rodars-1000W.jpg', tags: ['lifestyle', 'motor'], detail: detailLoren, createdAt: date, updatedAt: date},
-        { name: 'iPhone 11Pro', sell: true, price: 50.00, foto: 'iPhone-11-pro.jpg', tags: ['lifestyle', 'mobile'], detail: detailLoren, createdAt: date, updatedAt: date },
+        { name: 'iPhone 11Pro', sell: true, price: 50.00, photo: 'iPhone-11-pro.jpg', tags: ['lifestyle', 'mobile'], detail: detailLoren, createdAt: date, updatedAt: date },
         { name: 'Aston Martin DBS', sell: true, price: 225630.55, photo: 'aston-martin-dbs.jpg', tags: ['lifestyle', 'motor'], detail: detailLoren, createdAt: date, updatedAt: date },
         { name: 'MacBook Air', sell: false, price: 250.50, photo: 'apple-macbook-air.jpg', tags: ['lifestyle', 'work'], detail: detailLoren, createdAt: date, updatedAt: date },
         { name: 'TV Samsung 4K UHD', sell: false, price: 4250.00, photo: 'TV-Samsung-49NU7305.jpg', tags: ['lifestyle', 'work'], detail: detailLoren, createdAt: date, updatedAt: date },

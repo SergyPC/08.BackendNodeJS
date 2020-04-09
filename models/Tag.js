@@ -21,13 +21,14 @@ const tagSchema = mongoose.Schema({
  * El método lista se lo estamos metiendo a la Clase Tag
  * Tag.lista(...) no es una instancia de tag. Esto respresanta a la Clase Tag (al Modelo).
  */
-tagSchema.statics.lista = function (filter, limit, skip, sort, fields) {
+tagSchema.statics.lista = function (filter, limit, skip, sort, fields, distinct) {
     //return Tag.find(filter); //Cuando no existía el limit
     const query = Tag.find(filter);
     query.limit(limit); //Lo recibe como numérico
     query.skip(skip); //Lo recibe como numérico
     query.sort(sort);
     query.select(fields);
+    query.distinct(distinct);
     // console.log("query:", query);
     // El find, limit, skip, sort, select... no se van a ejecutar hasta que ponga un .then o un .exec
     return query.exec(); // exec: Devolverá una promesa. Que al final, cuando sea resuelta, resolverá a una lista de documentos (Promise<Document[]>)
