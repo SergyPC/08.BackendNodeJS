@@ -75,19 +75,13 @@ router.get('/', async (req, res, next) => { //http://localhost:3000/api/anuncios
         let filter = {};
         let isIncorrectPrice = false;
         
-        // if(regExpNumbers.test("a123000.000000"))
-        //     console.log("Correcto")
-        // else
-        //     console.log("Incorrecto")
-
-        // console.log ("fields:", fields);
-        // if (typeof fields === 'undefined')
-        //     fields = '-__v';
-        // else if (fields.indexOf('-__v') != -1)
-        //     fields += ' -__v';
-
         // Eliminamos el campo __v que añade MongoDB por defecto
-        (typeof fields === 'undefined') ? fields = '-__v' : fields += ' -__v';
+        //(typeof fields === 'undefined') ? fields = '-__v' : fields += ' -__v';
+
+        //Sólo permito eliminar el campo '-__v'
+        (typeof fields === 'undefined') ? fields = '-__v' : fields = '-__v'; 
+
+        console.log("fiels",fields);
 
         if (typeof name !== 'undefined') { 
             //filter.name = name;
@@ -246,7 +240,7 @@ router.get('/:id', async (req, res, next) => {
 //Para probar el POST ejecutarlo en Postman
     // POST > http://localhost:3000/api/anuncios
     // En la Pestaña Body (Pasamos la información que queremos insertar para ese documento):
-        // (.) x-www-form-urlencoded
+        // (•) x-www-form-urlencoded
             // KEY		    VALUE
             // name	        Camiseta Lacoste
             // sell 	    true
@@ -257,15 +251,6 @@ router.get('/:id', async (req, res, next) => {
             // createdAt    2020-04-05T18:14:40.759Z
             // updatedAt    2020-04-05T18:14:40.759Z
 //router.post('/', async (req, res, next) => { 
-
-
-// NOS FALTA AÑADIR LOS NUEVOS CAMPOS EN POST Y PUT:
-// -  detail: String,
-// -  createdAt: Date,
-// -  updatedAt: Date,
-
-
-
 router.post('/',
     [
         check('name').isString().withMessage('should be string'),
@@ -370,7 +355,7 @@ router.post('/',
 //Para probar el post ejecutarlo en Postman
     // PUT > http://localhost:3000/api/anuncios/5e821c1730858334c486e073
     // En la Pestaña Body (Pasamos la información que queremos actualizar):
-        // (.) x-www-form-urlencoded
+        // (•) x-www-form-urlencoded
             // KEY		    VALUE
             // name	        Camiseta Lacoste
             // sell 	    true
@@ -419,11 +404,8 @@ router.put('/:id', async(req, res, next) => {
             }
         }
 
-        
-
         const tags = req.body.tags;
         let failure = false;
-
         if (typeof tags !== 'undefined') {
             const tagsPermitidos = [ "lifestyle", "motor", "mobile", "work"];
             if (typeof tags !== 'object') {
@@ -436,8 +418,6 @@ router.put('/:id', async(req, res, next) => {
                 });
             }
         }
-        else
-            failure = true;
 
         if (failure) {
             const err = new Error(`Not valid (${tags}). The allowed values for tags are: 'lifestyle', 'motor', 'mobile', 'work'`); //Not valid. Los valores permitidos para tags son: 'lifestyle', 'motor', 'mobile', 'work';

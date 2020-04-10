@@ -1,5 +1,7 @@
 # NodePOP
 
+NodePOP is an advertisements API.
+
 ## Installation
 
 (NodePOP requires [Node.js](https://nodejs.org/) v4+ to run)
@@ -13,6 +15,15 @@ To initialize the database you can run:
 ```shell
 npm run install-db
 ```
+
+## To start a MongoDB Server from console:
+(You must have [MongoDB](https://www.mongodb.com/download-center/community) installed)
+
+
+```shell
+./bin/mongod --dbpath ./data/db --directoryperdb
+```
+Only for operating systems that don't have it installed as a service (MongoDB, in Windows, is installed as a default service).
 
 <br />
 
@@ -33,112 +44,8 @@ npm start
 
 ## Page Routes
 
-<!-- * http://localhost:3000/ -->
-* http://localhost:3000/api/v1/tags
-* http://localhost:3000/api/v1/anuncios
-
-<br />
-
-## API Routes
-
-* http://localhost:3000/api/v1/anuncios
-
-Returns the list of tags in JSON format:
-```shell
-[
-  {
-    "_id": "5e8a01840051d817dcc778f7",
-    "nombre": "lifestyle"
-  },
-  {
-    "_id": "5e8a01840051d817dcc778f8",
-    "nombre": "mobile"
-  },
-  {
-    "_id": "5e8a01840051d817dcc778f9",
-    "nombre": "motor"
-  },
-  {
-    "_id": "5e8a01840051d817dcc778fa",
-    "nombre": "work"
-  }
-]
-
-* http://localhost:3000/api/v1/anuncios
-
-Returns the list of articles in JSON format:
-```shell
-[
-  {
-    "tags": [
-      "lifestyle",
-      "motor"
-    ],
-    "_id": "5e7f5873ef51c93f502f4fa8",
-    "nombre": "Bicicleta eléctrica Rodars 1000W",
-    "venta": true,
-    "precio": 230.15,
-    "foto": "bicicleta.jpg",
-  },
-  {
-    "tags": [
-      "lifestyle",
-      "mobile"
-    ],
-    "_id": "5e7f5873ef51c93f502f4fa9",
-    "nombre": "iPhone 11Pro",
-    "venta": true,
-    "precio": 50,
-    "foto": "iphone-11-pro.jpg",
-  },
-  {
-    "tags": [
-      "lifestyle",
-      "motor"
-    ],
-    "_id": "5e7f5873ef51c93f502f4faa",
-    "nombre": "Aston Martin DBS",
-    "venta": true,
-    "precio": 225630.55,
-    "foto": "aston-martin-dbs.jpg",
-  },
-  {
-    "tags": [
-      "lifestyle",
-      "work"
-    ],
-    "_id": "5e7f5873ef51c93f502f4fab",
-    "nombre": "MacBook Air",
-    "venta": false,
-    "precio": 250.5,
-    "foto": "apple-macbook-air.jpg",
-  },
-  {
-    "tags": [
-      "lifestyle",
-      "work"
-    ],
-    "_id": "5e7f5873ef51c93f502f4fac",
-    "nombre": "TV Samsung 4K UHD",
-    "venta": false,
-    "precio": 4250,
-    "foto": "TV-Samsung-49NU7305.jpg",
-  }
-]
-```
-
-<br />
-
-## More information
-
-### To start a MongoDB server from console:
-
-<!-- https://www.mongodb.com/download-center/community -->
-
-```shell
-./bin/mongod --dbpath ./data/db --directoryperdb
-```
-Only for operating systems that do not have it installed as a service (MongoDB, in Windows, is installed as a default service).
+* http://localhost:3000/
+* http://localhost:3000/tags
 
 <br />
 
@@ -151,105 +58,275 @@ http://localhost:3000/
 
 ## API Methods
 
-### List of advertisements
+**GET /api/tags** (http://localhost:3000/api/v1/tags)
 
-GET /apiv1/anuncios
+> Returns an array with the distinct tags from tags collection.
 
+#### - Result:
 ```shell
-// Endpoint: /apiv1/anuncios
-// It's a GET method that optionally through query string allows the following data:
-  [nombre]: string
-  [venta]: boolean
-  [precio]: number
-  [tags]: array
-  [limit]: number
-  [skip]: number
-  [fields]: (nombre, venta, precio, foto, tags)
-  [sort]: (nombre, venta, precio, foto, tags)
+[
+  "lifestyle",
+  "mobile",
+  "motor",
+  "work"
+]
 ```
 
-** Default limit is 100 **
-
-Will return the following:
-
-```shell
-// If everything goes well
-{
-   success: true,
-   result: Array
-}
-
-// f any error happens
-{
-   success: false,
-   error: ...
-}
-```
-
-Filtrado de anuncios
 <br />
-Puedes incluir filtros en la URL añadiendo parametros especiales a la consulta. Para comenzar con el filtrado incorpora el carácter `?` seguido de las queries a incorporar
-en el siguiente formato `<query>=<value>`. Si necesitas encadenar varias consultas puedes utilizar el carácter `&`.
 
+**GET /api/v1/anuncios** (http://localhost:3000/api/v1/anuncios)
 
-Ejemplos de consultas:
+> Returns the list of articles in JSON format.
 
-- Todos los anuncios que contienen el tag lifestyle: http://34.89.93.186:8080/apiv1/anuncios?tag=lifestyle:
-- Todos los anuncios con price entre 1 y 100: http://34.89.93.186:8080/apiv1/anuncios?price=1-100
-- Las dos consultas anteriores combinadas: http://34.89.93.186:8080/apiv1/anuncios?tag=lifestyle&price=1-100
-- Precio entre 1 y 100 de anuncios que empiecen por ‘Com’: http://34.89.93.186:8080/apiv1/anuncios?price=1-100&name=Com
-- Sólo los anuncios de venta: http://34.89.93.186:8080/apiv1/anuncios?venta=true
-- Sólo los anuncios de compra: http://34.89.93.186:8080/apiv1/anuncios?venta=false
+**(Default limit is 100)**
 
+#### - Result:
+```shell
+[
+  {
+    "tags": [
+      "lifestyle",
+      "motor"
+    ],
+    "_id": "5e8ca710ebce9562e8cdcb7f",
+    "name": "Bicicleta eléctrica Rodars 1000W",
+    "sell": true,
+    "price": 230.15,
+    "photo": "bicicleta-rodars-1000W.jpg",
+    "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "createdAt": "2020-04-07T16:15:12.284Z",
+    "updatedAt": "2020-04-07T16:15:12.284Z"
+  },
+  {
+    "tags": [
+      "lifestyle",
+      "mobile"
+    ],
+    "_id": "5e8ca710ebce9562e8cdcb80",
+    "name": "iPhone 11Pro",
+    "sell": true,
+    "price": 50,
+    "photo": "iPhone-11-pro.jpg",
+    "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "createdAt": "2020-04-07T16:15:12.284Z",
+    "updatedAt": "2020-04-07T16:15:12.284Z"
+  },
+  {
+    "tags": [
+      "lifestyle",
+      "motor"
+    ],
+    "_id": "5e8ca710ebce9562e8cdcb81",
+    "name": "Aston Martin DBS",
+    "sell": true,
+    "price": 225630.55,
+    "photo": "aston-martin-dbs.jpg",
+    "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "createdAt": "2020-04-07T16:15:12.284Z",
+    "updatedAt": "2020-04-07T16:15:12.284Z"
+  },
+  {
+    "tags": [
+      "lifestyle",
+      "work"
+    ],
+    "_id": "5e8ca710ebce9562e8cdcb82",
+    "name": "MacBook Air",
+    "sell": false,
+    "price": 250.5,
+    "photo": "apple-macbook-air.jpg",
+    "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "createdAt": "2020-04-07T16:15:12.284Z",
+    "updatedAt": "2020-04-07T16:15:12.284Z"
+  },
+  {
+    "tags": [
+      "lifestyle",
+      "work"
+    ],
+    "_id": "5e8ca710ebce9562e8cdcb83",
+    "name": "TV Samsung 4K UHD",
+    "sell": false,
+    "price": 4250,
+    "photo": "TV-Samsung-49NU7305.jpg",
+    "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "createdAt": "2020-04-07T16:15:12.284Z",
+    "updatedAt": "2020-04-07T16:15:12.284Z"
+  }
+]
+```
 
-Los parámetros disponibles para filtrado son:
-
-- name: filtrado por los que empiecen con el string indicado (la API NO es case sensitive).
-- price: filtrar por precio. Entre un rango x-y, menores a un precio x-, o mayores a un precio -y.
-- tag: permite filtrar los anuncios que tengan el tag indicado.
-- venta: permite filtrar por anuncios de venta (=true), o anuncios de compra (=false)
-- skip: permite saltar resultados (utilizado para paginar junto con limit)
-- limit: permite limitar el número de resultados devueltos
-- fields: campos a mostrar del anuncio
-
-
-Ejemplo de consulta
-
-http://34.89.93.186:8080/apiv1/anuncios?price=1-100&venta=false
+#### - Filters for this method:
 
 ```shell
+// This GET method optionally, through query string, allows the following data:
 {
-  "success": true,
-  "results": [
-    {
-      "_id": "5d3a0a5f9bd7ed2ece463abc",
-      "nombre": "Comba de Crossfit",
-      "venta": true,
-      "precio": 13.50,
-      "foto": "comba.jpg",
-      "tags": [
-        "lifestyle", "mobile", "motor", "work"
-      ],
-      "createdAt": "2019-07-25T20:00:31.945Z",
-      "updatedAt": "2019-07-25T20:00:31.945Z",
-      "__v": 0
-    },
-    {
-      ...
-    },
-    {
-      ...
-    }
-  ]
+  [name]: String,
+  [sell]: Boolean,
+  [price]: Number,
+  [tags]: [String],
+  [limit]: number,
+  [skip]: number,
+  [fields]: (name, sell, price, photo, tags, detail),
+  [sort]: (name, sell, price, photo, tags, detail),
 }
 ```
 
+**Posible Filters:**
 
+- /api/v1/anuncios?**name=iPhone**
+  > Starting word, non case-sensitive.
+- /api/v1/anuncios?**sell=true**
+  > Sell is equal to true (or false).
+- /api/v1/anuncios?**price=50**
+  > Price is equal to 200.
+- /api/v1/anuncios?**price=1-5000**
+  > Price range between 1 to 5000.
+- /api/v1/anuncios?**price=200-**
+  > Price is equal or greater than 200.
+- /api/v1/anuncios?**price=-1000**
+  > Price is equal or lower than 1000.
+- /api/v1/anuncios?**tags=lifestyle,mobile,motor,work**
+  > Tags splitted by "," or " ".
+- /api/v1/anuncios?**skip=0**
+  > Begins returning documents from 'anuncios' collection.
+- /api/v1/anuncios?**limit=10**
+  > Limit the results into 10.
+- /api/v1/anuncios?**sort=name**
+  > Sort ads by name (lower to greater). With the option "-name" (greater to lower).
 
-<!-- (HABRÍA QUE DOCUMENTAR AQUÍ LOS FILTROS QUE HEMOS HECHO...) -->
+<br />
 
-GET /apiv1/anuncios/:id
+**A complete example:**
 
-POST /apiv1/anuncios
+```shell
+http://localhost:3000/?skip=0&limit=5&sort=name&price=1-5000&tags=lifestyle
+```
+> Returns the first 5 documents, ordered by name, whose price is between 1 and 5000 and their tags are lifestyle.
 
-PUT /apiv1/anuncios
+<br />
+
+**GET /api/v1/anuncios/:id** (http://localhost:3000/api/v1/anuncios/5e8ca710ebce9562e8cdcb80)
+
+> Return an advertisement in JSON format.
+
+#### - Result:
+```shell
+{
+  "result": {
+    "tags": [
+      "lifestyle",
+      "mobile"
+    ],
+    "_id": "5e8ca710ebce9562e8cdcb80",
+    "name": "iPhone 11Pro",
+    "sell": true,
+    "price": 50,
+    "photo": "iPhone-11-pro.jpg",
+    "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "createdAt": "2020-04-07T16:15:12.284Z",
+    "updatedAt": "2020-04-07T16:15:12.284Z"
+  }
+}
+```
+
+<br />
+
+**POST /api/v1/anuncios** (http://localhost:3000/api/v1/anuncios)
+
+> Insert an advertisement and return it in JSON format.
+#### - Data required in the body:
+```shell
+POST > http://localhost:3000/api/anuncios
+
+// In the Body tab:
+  - We will mark "x-www-form-urlencoded"
+  - We will add the following KEY/VALUE that we want to insert for that document:
+
+  (•) x-www-form-urlencoded
+        KEY         VALUE
+        -----------------
+        name        Disco duro
+        sell        false
+        price       123.10
+        photo       noDisponible.jpg
+        tags        lifestyle
+        detail      Compro Disco duro que esté en buen estado.
+```
+#### - Result:
+```shell
+{
+  "result": {
+    "tags": [
+      "lifestyle"
+    ],
+    "_id": "5e9080d470f90f1ee8ade083",
+    "name": "Disco duro",
+    "sell": false,
+    "price": 123.10,
+    "photo": "noDisponible.jpg",
+    "detail": "Compro Disco duro que esté en buen estado.",
+    "createdAt": "2020-04-10T14:21:08.918Z",
+    "updatedAt": "2020-04-10T14:21:08.918Z"
+  }
+}
+```
+
+<br />
+
+**PUT /api/v1/anuncios/:id** (http://localhost:3000/api/v1/anuncios/5e9080d470f90f1ee8ade083)
+
+> Update an advertisement and return it in JSON format.
+#### - Data required in the body:
+```shell
+PUT > http://localhost:3000/api/anuncios/5e9080d470f90f1ee8ade083
+
+// In the Body tab:
+  - We will mark "x-www-form-urlencoded"
+  - We can update any of the following KEY/VALUE for that document id:
+
+  (•) x-www-form-urlencoded
+        KEY         VALUE
+        -----------------
+        name        Disco duro
+        sell        true
+        price       123.10
+        photo       noDisponible.jpg
+        tags        lifestyle
+        detail      Vendo Disco duro de 2TB (está en buen estado).
+```
+#### - Result:
+```shell
+{
+  "result": {
+    "tags": [
+      "lifestyle"
+    ],
+    "_id": "5e9080d470f90f1ee8ade083",
+    "name": "Disco duro",
+    "sell": true,
+    "price": 123.10,
+    "photo": "noDisponible.jpg",
+    "detail": "Vendo Disco duro de 2TB (está en buen estado).",
+    "createdAt": "2020-04-10T14:21:08.918Z",
+    "updatedAt": "2020-04-10T17:02:28.273Z"
+  }
+}
+```
+
+<br />
+
+**DELETE /api/v1/anuncios/:id** (http://localhost:3000/api/v1/anuncios/5e9080d470f90f1ee8ade083)
+
+> Delete an advertisement.
+#### - Data required in the body:
+```shell
+DELETE > http://localhost:3000/api/anuncios/5e9080d470f90f1ee8ade083
+
+// In the Body tab:
+  - We will not add any value.
+```
+#### - Result:
+```shell
+//Returns a Status 200 (Success OK).
+```

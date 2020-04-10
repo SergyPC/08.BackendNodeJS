@@ -29,6 +29,7 @@ const { query, check, validationResult } = require('express-validator');
     // ]
 router.get('/', async (req, res, next) => {
     try {
+        console.log("ENTRAMOS EN ROUTES/API/V1/TAGS");
         //const docs = await Tag.find(); 
         const name = req.query.name;
         // Si no hay req.query.limit (No lo han añadido) devuelve como máximo 100 documentos

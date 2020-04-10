@@ -27,12 +27,12 @@
     
 
     
-    <% if (data.length > 0) { %>
+    <% if (data[0].length > 0) { %>
 
     <!-- <h5>Welcome to <%= title %>! Enter some allowed filter in the queryparams...</h5> -->
 
     <div class="row row-cols-1 row-cols-md-3">
-      <% data.forEach(ad => { %>
+      <% data[0].forEach(ad => { %>
       <div class="col mb-4">
         <div class="card h-100">
           <img src="/images/<%= ad.photo %>" class="card-img-top" alt="<%= ad.name %>">
@@ -63,64 +63,17 @@
       <h4 class="alert-heading">There aren't results with the specified search parameters.</h4>
       <hr>
       <p>Verify that:</p>
-      <p>- The sell value can be <i>true</i> or <i>false</i>.</p>
-      <p>- The tags value can be <i>lifestyle</i> or <i>mobile</i> or <i>motor</i> or <i>work</i>.</p>
-      <p>- The price value can be <i>'ExactPrice'</i> or <i>'minPrice-maxPrice'</i> or <i>'minPrice-'</i> or <i>'-maxPrice'</i>.</p>
-      <p>- The decimal price separator must be <i>'.'</i></p>
+      <p>&#149; The sell value can be: true or false</p>
+      <p>&#149; The tags value can be: <%= data[1] %></p>
+      <p>&#149; The price value can be:</p>
+      <p>&nbsp;&nbsp;&nbsp;&#149; 'ExactPrice': price=50</p>
+      <p>&nbsp;&nbsp;&nbsp;&#149; 'minPrice-maxPrice': price=0-300</p>
+      <p>&nbsp;&nbsp;&nbsp;&#149; 'minPrice-': price=0-</p>
+      <p>&nbsp;&nbsp;&nbsp;&#149; '-maxPrice': price=-300</p>
+      <p>&#149; The decimal price separator must be '<strong>.</strong>': price=230.15</p>
     </div>
 
     <% } %>
-
-
-    <!-- <% if (data.length > 0) { %>
-      <table border='1'>
-        <tr>
-          <th>Name</th>
-          <th>AdType(Sell/Buy)</th>
-          <th>Price</th>
-          <th>Photo</th>
-          <th>Tags</th>
-          <th>Detail</th>
-          <th>createdAt</th>
-          <th>updatedAt</th>
-        </tr>
-        <% for(let i=0; i < data.length; i++) { %>
-        <tr>
-          <td><%= data[i].name %></td>
-          <td><%= ((data[i].sell) ? 'Sell' : 'Buy') %></td>
-          <td><%= data[i].price %></td>
-          <td>
-            (<%= data[i].photo %>)
-            <br />
-            <img src='/images/<%= data[i].photo %>' alt='<%= data[i].name %>' width="200px">
-          </td>
-          <td><%= data[i].tags %></td>
-          <td><%= data[i].detail %></td>
-          <td><%= data[i].createdAt.toString() %></td>
-          <td><%= data[i].updatedAt.toString() %></td>
-        </tr>
-        <% } %>
-      </table>
-    <% } 
-    else { %>
-      <table border='1'>
-        <tr>
-          <th>There aren't results with the specified search parameters.</th>
-        </tr>
-        <tr>
-          <td>
-            <p>&nbsp;Verify that:</p>
-            <ul>
-              <li>The sell value is <i>true</i> or <i>false</i>.</li>
-              <li>The tags value is <i>lifestyle</i> or <i>mobile</i> or <i>motor</i> or <i>work</i>.</li>
-              <li>The price value is <i>'ExactPrice'</i> or <i>'minPrice-maxPrice'</i> or <i>'minPrice-'</i> or <i>'-maxPrice'</i>. &nbsp;</li>
-              <li>The decimal price separator is <i>'.'</i></li>
-            </ul>
-          </td>
-        </tr>
-      </table>
-    <% } %> -->
-
 
     </main>
   </body>

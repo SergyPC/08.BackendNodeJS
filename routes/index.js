@@ -3,7 +3,9 @@
 var express = require('express');
 var router = express.Router();
 
-const getAds = require('./../public/javascripts/apiCalls');
+//const getAds = require('./../public/javascripts/apiCalls');
+const api = require('./../public/javascripts/apiCalls');
+const { getAds, getTags } = api();
 
 //Validaciones En el middleware: Destructuring:
 const { query, check, validationResult } = require('express-validator');
@@ -90,11 +92,14 @@ router.get('/', async function (req, res, next) {
       ads = await getAds(queryparams);
     }
 
+    const tags = await getTags("?distinct=name");
+    console.log("tags:", tags);
+
     //const ads = await getAds(queryparams);
     
     res.render('index', {
       title: 'NodePOP',
-      data: ads,
+      data: [ads, tags],
     });
   }
   catch (err) {
