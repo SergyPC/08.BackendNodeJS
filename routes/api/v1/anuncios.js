@@ -15,63 +15,21 @@ const Anuncio = require('../../../models/Anuncio');
 //Validaciones En el middleware: Destructuring:
 const { query, check, validationResult } = require('express-validator');
 
-// Creamos un middleware para que nos devuelva en http://localhost:3000/api/anuncios un Json con los docs encontrados
-// usando un arrow function
-// router.get('/', (req, res, next) => {
-//     Anuncio.find().exec((err, docs) => {
-//       res.json(docs);
-//     });
-// });
-
 /**
- * GET /api/anuncios
- * Devuelve una lista de anuncios
- * http://localhost:3000/api/anuncios
- */
-// router.get('/', async (req, res, next) => {
-//     try {
-//         const docs = await Anuncio.find(); //Le decimos al modelo Agentes que busque una lista de anuncios
-//         res.json(docs);
-//     } catch (err) {
-//         next (err);
-//     }
-// });
-
-/**
- * GET /api/anuncios
- * Devuelve una lista de anuncios usando filtros
- * http://localhost:3000/api/anuncios
- * 
- * Crearemos filtros, limites, ordenaciones, etc...
- * Para filtrar cosas nos aprobecharemos de la sintaxis de MongoDB (.find, > que, < que...)
- */
-// Creamos un middleware para que nos devuelva en http://localhost:3000/api/anuncios un Json con los docs encontrados
-// usando una promesa async / away
-router.get('/', async (req, res, next) => { //http://localhost:3000/api/anuncios
-// router.get('/', [
-//     //query('price').isNumeric().withMessage('debería ser numérico'),
-//     check('price').isNumeric().withMessage('debería ser numérico'),
-// ], async (req, res, next) => { //http://localhost:3000/api/anuncios
+ * GET /api/v1/anuncios
+ * Devuelve una lista de anuncios (el limite máximo por defecto es 100) pudiendo utilizar filtros
+ * http://localhost:3000/api/v1/anuncios
+*/
+router.get('/', async (req, res, next) => { 
     try {
-        //validationResult(req).throw(); // lanza excepción si hay errores de validación
-
-        //const docs = await Anuncio.find(); 
         const name = req.query.name;
         const sell = req.query.sell;
         const price = req.query.price;
         const tags = req.query.tags;
-        // Si no hay req.query.limit (No lo han añadido) devuelve como máximo 100 documentos
-        const limit = parseInt(req.query.limit || 100); //Lo convertimos a integer ya que la queryString devuelve cualquier numero como string...
-        // console.log(limit); // http://localhost:3000/api/anuncios devolvería: NaN
+        const limit = parseInt(req.query.limit || 100); // Si no hay req.query.limit (No lo han añadido) devuelve como máximo 100 documentos //Lo convertimos a integer ya que la queryString devuelve cualquier numero como string...
         const skip = parseInt(req.query.skip);
         const sort = req.query.sort;
-        // const fields = req.query.fields;
         let fields = req.query.fields;
-        
-        // console.log("req.query.price:", req.query.price);
-        // console.log("price:", price);
-
-        //const filter = {};
         let filter = {};
         let isIncorrectPrice = false;
         
@@ -81,14 +39,8 @@ router.get('/', async (req, res, next) => { //http://localhost:3000/api/anuncios
         //Sólo permito eliminar el campo '-__v'
         (typeof fields === 'undefined') ? fields = '-__v' : fields = '-__v'; 
 
-        console.log("fiels",fields);
-
         if (typeof name !== 'undefined') { 
-            //filter.name = name;
             filter.name = { $regex: '^' + name, $options: 'i' }; //Filtrará por algo que comience por el nombre introducido, sin diferenciar entre mayúsculas y minúsculas
-            // filter.name = { $regex: name, $options: 'i' }; //Filtrará por el nombre introducido, sin diferenciar entre mayúsculas y minúsculas
-            // filter.name = new RegExp(`^${name}`, 'i');
-            //console.log("filter.name:", filter.name);
         }
 
         if (typeof sell !== 'undefined') { 
@@ -111,42 +63,19 @@ router.get('/', async (req, res, next) => { //http://localhost:3000/api/anuncios
         if (typeof price !== 'undefined') { 
             const regExpNumbers = new RegExp(/^[0-9]+(.[0-9]+)?$/);
             const rango = price.split('-');
-            // console.log ("COMENZAMOS CON PRECIO");
-            // console.log ("rango.length:", rango.length);
-            // console.log ("rango:", rango);
-            // Probar sólo con rango sino da error: // console.log ("rango[0] no hay ',':", rango[0].indexOf(',') === -1);
-            // Probar sólo con rango sino da error: // console.log ("rango[1] no hay ',':", rango[1].indexOf(',') === -1);
-            // console.log ("price.startsWith('-', 0):", price.startsWith('-', 0));
             if (rango.length === 1) { //price=50
                 (regExpNumbers.test(price) && price.indexOf(',') === -1) ? filter.price = parseFloat(price) : isIncorrectPrice = true;
-
-                // if (regExpNumbers.test(price)) 
-                //     filter.price = parseFloat(price);
-                // else 
-                //     isIncorrectPrice = true;
             }
             else if (rango.length === 2) { //Si contiene algún guión
                 if(price.startsWith('-', 0)) { //price=-50
                     (regExpNumbers.test(rango[1]) && rango[1].indexOf(',') === -1) ? filter.price = { $lte: parseFloat(rango[1]) } : isIncorrectPrice = true;
-                    // if (regExpNumbers.test(rango[1])) 
-                    //     filter.price = { $lte: parseFloat(rango[1]) };
-                    // else 
-                    //     isIncorrectPrice = true;
                 } 
                 else {
                     if (!rango[1]) { //price=10-
                         (regExpNumbers.test(rango[0]) && rango[0].indexOf(',') === -1) ? filter.price = { $gte: parseFloat(rango[0]) } : isIncorrectPrice = true;
-                        // if (regExpNumbers.test(rango[0])) 
-                        //     filter.price = { $gte: parseFloat(rango[0]) };
-                        // else
-                        //     isIncorrectPrice = true;
                     }
                     else { //price=10-50
                         ((regExpNumbers.test(rango[0]) && rango[0].indexOf(',') === -1) && (regExpNumbers.test(rango[1]) && rango[1].indexOf(',') === -1)) ? filter.price = { $gte: parseFloat(rango[0]), $lte: parseFloat(rango[1]) } : isIncorrectPrice = true;
-                        // if (regExpNumbers.test(rango[0]) && regExpNumbers.test(rango[1])) 
-                        //     filter.price = { $gte: parseFloat(rango[0]), $lte: parseFloat(rango[1]) };
-                        // else
-                        //     isIncorrectPrice = true;
                     }
                 }
             } 
@@ -155,17 +84,12 @@ router.get('/', async (req, res, next) => { //http://localhost:3000/api/anuncios
             }
         }
 
-        // console.log("filter.price:", filter.price);
-
         /**
          * Permite múltiples tag:
          * ● Separados por coma: tags=work,lifestyle
          * ● Separados por espacio: tags=work lifestyle
          */
         if (typeof tags !== 'undefined') { //if (tags) {
-            // filter.tags = tags;
-            // filter.tags = { "$in": tags}; //De esta forma vamos a buscar todos los anuncios que tengan alguno de los tags especificados.
-            // console.log("tags:", tags);
             let arrayTags;
             if (tags.indexOf(' ') != -1)
                 arrayTags = tags.split(' ');
@@ -174,36 +98,33 @@ router.get('/', async (req, res, next) => { //http://localhost:3000/api/anuncios
             else
                 arrayTags = tags;
             filter.tags = { "$in": arrayTags};
-            // console.log("arrayTags:", arrayTags);
         }
 
         //let docs;
         if (isIncorrectPrice) { //Si han añadido un precio que no es numérico
-            //docs = []; //http://localhost:3000/api/anuncios?name=iPhone
+            //docs = [];
             const err = new Error('The price should be numeric.'); //El precio debería ser numérico.
             err.status = 422;
             next(err);
             return;
         }
         //else // Creamos un método estático, lista, en el modelo Anuncio.js
-        //    docs = await Anuncio.lista(filter, limit, skip, sort, fields); //http://localhost:3000/api/anuncios?name=iPhone
+        //    docs = await Anuncio.lista(filter, limit, skip, sort, fields); //http://localhost:3000/api/v1/anuncios?name=iPhone
         
-        const docs = await Anuncio.lista(filter, limit, skip, sort, fields); //http://localhost:3000/api/anuncios?name=iPhone
+        const docs = await Anuncio.lista(filter, limit, skip, sort, fields); //http://localhost:3000/api/v1/anuncios?name=iPhone
         res.json(docs);
         
     } catch (err) {
-        // console.log ("err.stack:", err.stack);
-        // console.log ("err.name:", err.name);
         next(err);
     }
 });
 
-// Creamos un middleware para que nos devuelva en http://localhost:3000/api/anuncios/5e7f5873ef51c93f502f4fa8 un Json con un único anuncio
-// usando una promesa async away
+
+
 /**
- * GET /api/anuncios/:id
- * Busca un anuncio por id y lo devuelve
- * http://localhost:3000/api/anuncios/5e7f5873ef51c93f502f4fa8
+ * GET /api/v1/anuncios/:id
+ * Busca un anuncio por id y lo devuelve en formato JSON
+ * http://localhost:3000/api/v1/anuncios/5e7f5873ef51c93f502f4fa8
  */
 router.get('/:id', async (req, res, next) => {
     try {
@@ -223,7 +144,6 @@ router.get('/:id', async (req, res, next) => {
             err.status = 404;
             next(err);
             return;
-            //Las 2 líneas anteriores se pueden poner: return next(err);
         }
         res.json( { result: anuncio } );
     } catch (err) {
@@ -233,12 +153,12 @@ router.get('/:id', async (req, res, next) => {
 
 
 /**
- * POST /api/anuncios
- * Crea un anuncio
- * http://localhost:3000/api/anuncios
+ * POST /api/v1/anuncios
+ * Crea un anuncio y lo devuelve en formato JSON
+ * http://localhost:3000/api/v1/anuncios
  */
-//Para probar el POST ejecutarlo en Postman
-    // POST > http://localhost:3000/api/anuncios
+// Para probar el POST ejecutarlo en Postman
+    // POST > http://localhost:3000/api/v1/anuncios
     // En la Pestaña Body (Pasamos la información que queremos insertar para ese documento):
         // (•) x-www-form-urlencoded
             // KEY		    VALUE
@@ -250,7 +170,6 @@ router.get('/:id', async (req, res, next) => {
             // detail       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua.
             // createdAt    2020-04-05T18:14:40.759Z
             // updatedAt    2020-04-05T18:14:40.759Z
-//router.post('/', async (req, res, next) => { 
 router.post('/',
     [
         check('name').isString().withMessage('should be string'),
@@ -258,28 +177,16 @@ router.post('/',
         check('price').isNumeric().withMessage('should be numeric'),
         check('photo').isString().withMessage('should be string'),
         check('detail').isString().withMessage('should be string'),
-        //check('tags').isString().withMessage('should be array of strings'),
-        //check('photo').isURL().withMessage('should be URL'),
-        //check('tags').isArray().withMessage('should be array of strings'),
     ],
     async (req, res, next) => {
     try {
         validationResult(req).throw(); // lanza excepción si hay errores de validación
-
-        //recogemos por el body los datos del anuncio a crear
-        //const anuncioData = req.body;
-        let anuncioData = req.body;
         
+        let anuncioData = req.body; //recogemos por el body los datos del anuncio a crear
         const tags = req.body.tags;
         const sell = req.body.sell;
         const price = req.body.price;
-
         let failure = false;
-        
-        // const regExpIsIDMongoDB = new RegExp("^[0-9a-fA-F]{24}$");
-        // const RegexImageURL = new RegExp("(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)");
-        // // const RegexImageExtension = RegExp("(/\.(gif|jpe?g|tiff|png|webp|bmp)$/i)");
-        
         
         const RegexImageExtension = RegExp("\.(gif|jpe?g|tiff|png|webp|bmp)$");
         if (!(RegexImageExtension.test(req.body.photo.toLowerCase()))) { //Imagen Incorrecta
@@ -332,7 +239,6 @@ router.post('/',
     
         // Creamos el objeto en memoria
         const anuncio = new Anuncio(anuncioData); // Le pasamos al constructor Anuncio los datos recibidos por el body
-        // console.log("anuncio:", anuncio);
 
         // Guardamos en la BBDD el objeto en memoria
         // la función save podría utilizarse con un callback o como una promesa.
@@ -347,13 +253,14 @@ router.post('/',
     }
 });
 
+
 /**
- * PUT /api/anuncios
- * Actualiza un anuncio en la base de datos
- * http://localhost:3000/api/anuncios/5e821c1730858334c486e073
+ * PUT /api/v1/anuncios/:id
+ * Actualiza un anuncio en la base de datos y nos lo devuelve en formato JSON
+ * http://localhost:3000/api/v1/anuncios/5e821c1730858334c486e073
  */
-//Para probar el post ejecutarlo en Postman
-    // PUT > http://localhost:3000/api/anuncios/5e821c1730858334c486e073
+// Para probar el PUT ejecutarlo en Postman
+    // PUT > http://localhost:3000/api/v1/anuncios/5e821c1730858334c486e073
     // En la Pestaña Body (Pasamos la información que queremos actualizar):
         // (•) x-www-form-urlencoded
             // KEY		    VALUE
@@ -372,7 +279,6 @@ router.put('/:id', async(req, res, next) => {
         const photo = req.body.photo;
         const price = req.body.price;
         const sell = req.body.sell;
-
         //const anuncioActualizado = await Anuncio.findByIdAndUpdate(_id, anuncioData); //Actualiza el anuncio y Nos devuelve el anuncio antes de actualizarlo
         
         if (typeof photo !== 'undefined') { 
@@ -426,7 +332,6 @@ router.put('/:id', async(req, res, next) => {
             return;
         }
 
-
         const date = new Date();
         anuncioData.updatedAt = date;
 
@@ -436,7 +341,6 @@ router.put('/:id', async(req, res, next) => {
         }); //Actualiza el anuncio y Nos devuelve el anuncio actualizado
         
         res.status(200).json({ result: anuncioActualizado }); //Response code 200: Success - OK
-
         //res.json({ result: anuncioActualizado });
     } catch (err) {
         next(err);
@@ -445,18 +349,16 @@ router.put('/:id', async(req, res, next) => {
 
 
 /**
- * DELETE /api/anuncios
- * Elimina un anuncio
- * http://localhost:3000/api/anuncios/5e8219748b397949d0ad853b
+ * DELETE /api/v1/anuncios/:id
+ * Elimina un anuncio y nos devuelve un Status 200 (Success OK)
+ * http://localhost:3000/api/v1/anuncios/5e8219748b397949d0ad853b
  */
-//Para probar el post ejecutarlo en Postman
-// DELETE > http://localhost:3000/api/anuncios/5e8219748b397949d0ad853b
+// Para probar el DELETE ejecutarlo en Postman
+    // DELETE > http://localhost:3000/api/v1/anuncios/5e8219748b397949d0ad853b
 router.delete('/:id', async (req, res, next) => {
     try {
         const _id = req.params.id;
-        // No se debe utilizar "await Anuncio.remove({_id: _id});" porque está deprecado y en futuras versiones de mongoose dejará de funcionar.
         await Anuncio.deleteOne({_id: _id}); //Es lo mismo a esto: await Anuncio.deleteOne({_id});
-        
         // res.json({ ok: true }); //Al borrarlo, devolverá directamente un Status 200
         // res.json({ success: true }); //Al borrarlo, devolverá directamente un Status 200
         res.json(); //Al borrarlo, devolverá directamente un Status 200

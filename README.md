@@ -58,7 +58,7 @@ http://localhost:3000/
 
 ## API Methods
 
-**GET /api/tags** (http://localhost:3000/api/v1/tags)
+**GET /api/v1/tags** (http://localhost:3000/api/v1/tags)
 
 > Returns an array with the distinct tags from tags collection.
 
@@ -76,7 +76,7 @@ http://localhost:3000/
 
 **GET /api/v1/anuncios** (http://localhost:3000/api/v1/anuncios)
 
-> Returns the list of articles in JSON format.
+> Returns the list of advertisement in JSON format.
 
 **(Default limit is 100)**
 
@@ -237,7 +237,7 @@ http://localhost:3000/?skip=0&limit=5&sort=name&price=1-5000&tags=lifestyle
 > Insert an advertisement and return it in JSON format.
 #### - Data required in the body:
 ```shell
-POST > http://localhost:3000/api/anuncios
+POST > http://localhost:3000/api/v1/anuncios
 
 // In the Body tab:
   - We will mark "x-www-form-urlencoded"
@@ -279,7 +279,7 @@ POST > http://localhost:3000/api/anuncios
 > Update an advertisement and return it in JSON format.
 #### - Data required in the body:
 ```shell
-PUT > http://localhost:3000/api/anuncios/5e9080d470f90f1ee8ade083
+PUT > http://localhost:3000/api/v1/anuncios/5e9080d470f90f1ee8ade083
 
 // In the Body tab:
   - We will mark "x-www-form-urlencoded"
@@ -321,7 +321,7 @@ PUT > http://localhost:3000/api/anuncios/5e9080d470f90f1ee8ade083
 > Delete an advertisement.
 #### - Data required in the body:
 ```shell
-DELETE > http://localhost:3000/api/anuncios/5e9080d470f90f1ee8ade083
+DELETE > http://localhost:3000/api/v1/anuncios/5e9080d470f90f1ee8ade083
 
 // In the Body tab:
   - We will not add any value.

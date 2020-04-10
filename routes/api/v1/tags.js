@@ -16,47 +16,36 @@ const Tag = require('../../../models/Tag');
 const { query, check, validationResult } = require('express-validator');
 
 /**
- * GET /api/tags
- * Devuelve una lista de tags
+ * GET /api/v1/tags
+ * Devuelve un array con los distintos tags de la colección tags
  * http://localhost:3000/api/v1/tags
  */
-// Creamos un middleware para que nos devuelva en http://localhost:3000/api/v1/tags un JSON con los diferentes docs encontrados
-    // [
-    //     "lifestyle",
-    //     "mobile",
-    //     "motor",
-    //     "work"
-    // ]
 router.get('/', async (req, res, next) => {
     try {
-        console.log("ENTRAMOS EN ROUTES/API/V1/TAGS");
         //const docs = await Tag.find(); 
         const name = req.query.name;
-        // Si no hay req.query.limit (No lo han añadido) devuelve como máximo 100 documentos
-        const limit = parseInt(req.query.limit || 100); //Lo convertimos a integer ya que la queryString devuelve cualquier numero como string...
+        const limit = parseInt(req.query.limit || 100); // Si no hay req.query.limit (No lo han añadido) devuelve como máximo 100 documentos //Lo convertimos a integer ya que la queryString devuelve cualquier numero como string...
         const skip = parseInt(req.query.skip);
         const sort = req.query.sort;
         let fields = req.query.fields;
-
         const distinct = req.query.distinct || "name";
-
         let filter = {};
         
         // Eliminamos el campo __v que añade MongoDB por defecto
-        (typeof fields === 'undefined') ? fields = '-__v' : fields += ' -__v';
+        //(typeof fields === 'undefined') ? fields = '-__v' : fields += ' -__v';
+
+        //Sólo permito eliminar el campo '-__v'
+        (typeof fields === 'undefined') ? fields = '-__v' : fields = '-__v'; 
     
-        if (typeof name !== 'undefined') { //if (name) {
-            //filtro.name = name;
+        if (typeof name !== 'undefined') { 
             filter.name = { $regex: '^' + name, $options: 'i' }; //Filtrará por algo que comience por el nombre introducido, sin diferenciar entre mayúsculas y minúsculas
         }
 
-        const docs = await Tag.lista(filter, limit, skip, sort, fields, distinct); //http://localhost:3000/api/v1/tags?name=work
+        const docs = await Tag.lista(filter, limit, skip, sort, fields, distinct);
         
         res.json(docs);
             
     } catch (err) {
-        // console.log ("err.stack:", err.stack);
-        // console.log ("err.name:", err.name);
         next(err);
     }
 });

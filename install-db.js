@@ -28,8 +28,7 @@ conn.once('open', async () => {
     }
 });
 
-// Función para inicializar Anuncios
-// Devolverá una promesa
+// Función para inicializar Anuncios (Devolverá una promesa)
 async function initAnuncios() {
     const date = new Date();
     const detailLoren = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
@@ -43,8 +42,7 @@ async function initAnuncios() {
     ]);
 }
 
-// Función para inicializar Tags
-// Devolverá una promesa
+// Función para inicializar Tags  (Devolverá una promesa)
 async function initTags() {
     await Tag.deleteMany(); //Borra todos los registros de la tabla tags
     await Tag.insertMany([  //Añadimos los registros que queramos inicializar por defecto
@@ -54,22 +52,3 @@ async function initTags() {
         { name: 'work' },
     ]);
 }
-
-// "tags": [ "lifestyle", "mobile", "motor", "work"]
-
-// const anuncioSchema = mongoose.Schema({
-// 	name: String,
-// 	sell: Boolean, //true (sell) or false (buy)
-// 	price: Number,
-// 	photo: String,
-//  tags: [String],
-//  detail: String,
-//  createdAt: Date,
-//  updatedAt: Date,
-//  //message: mongoose.Schema.Types.Mixed, //Recogerá cualquier tipología en esta propiedad
-// });
-
-// const tagSchema = mongoose.Schema({
-// 	name: String,
-//  //message: mongoose.Schema.Types.Mixed, //Recogerá cualquier tipología en esta propiedad
-// });

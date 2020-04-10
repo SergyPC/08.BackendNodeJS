@@ -34,21 +34,6 @@ app.use(express.urlencoded({ extended: false })); // Utilizamos en Postman (POST
 app.use(cookieParser()); //Parsea las cookies
 app.use(express.static(path.join(__dirname, 'public'))); //Servir ficheros estáticos
 
-// Servir ficheros estáticos:
-// app.use('/pdf', express.static('d:/pdfs'));
-
-
-// app.use( (req, res, next) => {
-//   // Una de dos:
-//   // - Responder:
-//   // res.send('Qué tal!');
-//   // - O pasar el siguiente middleware:
-//   console.log('Llegó una petición de tipo', req.method);
-//   next();
-//   // - O llamar a next y pasarle un error (Yendo al middleware de error):
-//   // next(new Error('Esto va mal, amigo'));
-// });
-
 /**
  * Rutas del API
  * Es recomendable que corresponda la ruta del browser con la ruta del filesystem
@@ -59,7 +44,6 @@ app.use(express.static(path.join(__dirname, 'public'))); //Servir ficheros está
 app.use('/api/v1/anuncios', require('./routes/api/v1/anuncios'));
 app.use('/api/v1/tags', require('./routes/api/v1/tags'));
 
-
 /**
  * Rutas del Website (de la aplicación)
  */
@@ -69,11 +53,9 @@ app.use('/', require('./routes/index'));
 app.use('/tags', require('./routes/tags'));
 app.use('/users', require('./routes/users'));
 
-
 /**
  * middlewares para la Gestión de errores (404 y resto)
  */
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

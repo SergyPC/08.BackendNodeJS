@@ -35,7 +35,6 @@ anuncioSchema.statics.lista = function (filter, limit, skip, sort, fields) {
     query.skip(skip); //Lo recibe como numérico
     query.sort(sort);
     query.select(fields);
-    // console.log("query:", query);
     // El find, limit, skip, sort, select... no se van a ejecutar hasta que ponga un .then o un .exec
     return query.exec(); // exec: Devolverá una promesa. Que al final, cuando sea resuelta, resolverá a una lista de documentos (Promise<Document[]>)
 };
